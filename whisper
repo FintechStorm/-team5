@@ -67,7 +67,7 @@ var replyWatch = shh.filter({
   "to": "0x048175fbf3e1ac470af070bb06971acb53699b22baf3a9322dee86334a8a67d43c382adb54fab05244177db26bbba0ecb0a637531adb8ba862cd1416e25f0baf46"
 });
 
-shh.filter({
+web3.shh.filter({
 topics: [ '0x4d792073696c6c792061707021' ]
 }).watch(function (error, result) {
 if (error) console.error('ssh:error', error)

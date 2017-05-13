@@ -52,27 +52,20 @@ enum State {
 
 
   function validateMessage(
-    bytes32 p1h,
-    uint8 p1v,
-    bytes32 p1r,
-    bytes32 p1s,
-    bytes32 p2h,
-    uint8 p2v,
-    bytes32 p2r,
-    bytes32 p2s,
-    string p1m,
-    string p2m) public constant returns (
-    uint8 result, uint256 ownerBalance, uint256 partnerBalance) {
+    string m,
+    bytes32 h,
+    uint8 v,
+    bytes32 r,
+    bytes32 s) public constant returns (bool) {
 
-    address _owner= ecrecover(p1h, p1v, p1r, p1s);
-    if (_owner!=owner) throw;
+    if(sha256(m)!=h) throw;
+    address _addr= ecrecover(h, v, r, s);
+    if (_addr!=owner || _addr!=partner) throw;
     //  bool p1honest=true;
-    address _partner= ecrecover(p2h, p2v, p2r, p2s);
-    if (_partner!=partner) throw;
+    
+    //(nonce, ownerBalance, partnerBalance) = decodeMessage(p1m);
 
-    (nonce, ownerBalance, partnerBalance) = decodeMessage(p1m);
-
-    return(result, ownerBalance, partnerBalance);
+    return(true);
   }
 
   function decodeMessage(string message) public
@@ -87,20 +80,15 @@ enum State {
   }
 
   function close(
-    bytes32 p1h,
-    uint8 p1v,
-    bytes32 p1r,
-    bytes32 p1s,
-    bytes32 p2h,
-    uint8 p2v,
-    bytes32 p2r,
-    bytes32 p2s,
-    string p1m,
-    string p2m) {
+    string m,
+    bytes32 h,
+    uint8 v,
+    bytes32 r,
+    bytes32 s) {
     if (msg.sender!=owner || msg.sender!=partner) throw;
-    var (winner, p1b, p2b) = validateMessage(p1h, p1v, p1r, p1s, p2h, p2v, p2r, p2s, p1m, p2m);
-
-    if(!partner.send(p2b)) throw;
+    if(!validateMessage(m, h, v, r, s)) throw;
+    var (nonce, ownerBalance, partnerBalance) = decodeMessage(m);
+    if(!partner.send(partnerBalance)) throw;
     if(!owner.send(this.balance)) throw;
 
   }
