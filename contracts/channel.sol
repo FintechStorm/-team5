@@ -1,9 +1,10 @@
+pragma solidity ^0.4.4;
+
 import "./strings.sol";
 
-pragma solidity ^0.4.4;
 contract Channel
 {
-  using strings for *; 
+  using strings for *;
 
   address owner;
   address opponent;
@@ -12,13 +13,11 @@ contract Channel
   uint256 expirationBlockTime;
   uint256 nonce_1;
   uint256 nonce_2;
-  uint256 player1balance_1;
-  uint256 player1balance_2;
-  uint256 player2balance_1;
-  uint256 player2balance_2;
+  uint256 player1balance;
+  uint256 player2balance;
   address p1addr;
   address p2addr;
-  
+
 
   modifier onlyOwner() {
     if (msg.sender!=owner) throw;
@@ -50,7 +49,7 @@ contract Channel
 
   function () {} //no fallback, use the functions to play
 
-  function matchStake() 
+  function matchStake()
   payable
   {
     if (msg.sender != opponent) throw;
@@ -80,22 +79,16 @@ contract Channel
     //bool p2honest=true;
     //return(p1honest,p2honest);
 
-    (nonce_1, hand_1, player1balance_1, player2balance_1) = decodeMessage(p1m);
+    (nonce_1, player1balance, player2balance) = decodeMessage(p1m);
 
 
-    (nonce_2, hand_2, player1balance_2, player2balance_2) = decodeMessage(p2m);
 
-    if (nonce_1!=nonce_2) throw;
-    if (player2balance_1!=player2balance_2) throw;
-    if (player1balance_1!=player1balance_2) throw;
-
-    
-    return(result, player1balance_1, player2balance_1);
+    return(result, player1balance, player2balance);
 
 
   }
 
-  function decodeMessage(string message) public constant returns (uint256 _nonce, string _hand, uint256 _player1balance, uint256 _player2balance)
+  function decodeMessage(string message) public constant returns (uint256 _nonce, uint256 _player1balance, uint256 _player2balance)
   {
     var s = message.toSlice();
     var delim = "|".toSlice();
@@ -117,8 +110,8 @@ contract Channel
    string p2m)
   {
 
-    var (winner, p1b, p2b) = announceWinner(p1h, p1v, p1r, p1s, p2h, p2v, p2r, p2s, p1m, p2m);
-    
+    var (winner, p1b, p2b) = validateMessage(p1h, p1v, p1r, p1s, p2h, p2v, p2r, p2s, p1m, p2m);
+
     if(!opponent.send(p2b)) throw;
     if(!owner.send(this.balance)) throw;
 
@@ -197,5 +190,3 @@ function verify( bytes32 hash, uint8 v, bytes32 r, bytes32 s) constant returns(a
 
 
 }
-
-
