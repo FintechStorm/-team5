@@ -58,9 +58,11 @@ enum State {
     bytes32 r,
     bytes32 s) public constant returns (bool) {
 
-    if(sha256(m)!=h) throw;
+    if(sha3(m)!=h) throw;
+    var (_nonce, _ownerBalance, _partnerBalance) = decodeMessage(m);
+    if ((_ownerBalance+_partnerBalance)!=stake*2) throw;
     address _addr= ecrecover(h, v, r, s);
-    if (_addr!=owner || _addr!=partner) throw;
+    if (_addr!=owner && _addr!=partner) throw;
     //  bool p1honest=true;
     
     //(nonce, ownerBalance, partnerBalance) = decodeMessage(p1m);
