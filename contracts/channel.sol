@@ -87,7 +87,7 @@ enum State {
     uint8 v,
     bytes32 r,
     bytes32 s) {
-    if (msg.sender!=owner || msg.sender!=partner) throw;
+    if (msg.sender!=owner && msg.sender!=partner) throw;
     if(!validateMessage(m, h, v, r, s)) throw;
     var (nonce, ownerBalance, partnerBalance) = decodeMessage(m);
     if(!partner.send(partnerBalance)) throw;
