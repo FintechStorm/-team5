@@ -99,14 +99,7 @@ function startApp () {
     // WINNER
     $('#btn_winner').click(function () {
       var p1m = $('#compute_p1m').val()
-      // var p1h = $('#compute_p1h').val()
       var p1s = $('#compute_p1s').val()
-      // // var p1s = $('#compute_p1s').val()
-      // var p2m = $('#compute_p2m').val()
-      // var p2h = $('#compute_p2h').val()
-      // var p2s = $('#compute_p2s').val()
-      // var p2s = $('#compute_p2s').val()
-
       let h1 = web3.sha3(p1m)
       console.log(h1)
       let r1 = p1s.slice(0, 66)
@@ -116,15 +109,24 @@ function startApp () {
       v1 = web3.toDecimal(v1)
 
       if (v1 < 27) v1 += 27
-    //         bytes32 p1h,
-   // uint8 p1v,
-   // bytes32 p1r,
-   // bytes32 p1s,
-   // bytes32 p2h,
-   // uint8 p2v,
-   // bytes32 p2r,
-   // bytes32 p2s)
+
       myInstaRPS.validateMessage(p1m, h1, v1, r1, s1, function (err, res) { console.log(err, res) })
+    })
+
+    $('#btn_close').click(function () {
+      var m = $('#cashout_m').val()
+      var sig = $('#cashout_s').val()
+      let h = web3.sha3(m)
+      console.log(h)
+      let r = sig.slice(0, 66)
+      let s = '0x' + sig.slice(66, 130)
+      let v = '0x' + sig.slice(130, 132)
+      // console.log(v1)
+      v = web3.toDecimal(v)
+
+      if (v < 27) v += 27
+
+      myInstaRPS.close(m, h, v, r, s, function (err, res) { console.log(err, res) })
     })
   })
 }
