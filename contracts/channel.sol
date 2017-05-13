@@ -2,8 +2,7 @@ pragma solidity ^0.4.4;
 
 import "./strings.sol";
 
-contract Channel
-{
+contract Channel {
   using strings for *;
 
   address owner;
@@ -18,6 +17,7 @@ contract Channel
   address p1addr;
   address p2addr;
 
+  event LogClose(uint256, string, uint256, uint256);
 
   modifier onlyOwner() {
     if (msg.sender!=owner) throw;
@@ -35,9 +35,7 @@ contract Channel
 
   mapping (string => mapping(string => int)) payoffMatrix;
   //constructor
-  function Channel(address _opponent)
-  payable
-  {
+  function Channel(address _opponent) payable {
     if (msg.value<=0) throw;
 
     owner= msg.sender;
@@ -49,28 +47,27 @@ contract Channel
 
   function () {} //no fallback, use the functions to play
 
-  function matchStake()
-  payable
-  {
+  function matchStake() payable {
     if (msg.sender != opponent) throw;
     if (msg.value != stake) throw;
     if (matched) throw;
     matched = true;
   }
-  event LogClose(uint256, string, uint256, uint256);
+
 
   function validateMessage(
-   bytes32 p1h,
-   uint8 p1v,
-   bytes32 p1r,
-   bytes32 p1s,
-   bytes32 p2h,
-   uint8 p2v,
-   bytes32 p2r,
-   bytes32 p2s,
-   string p1m,
-   string p2m) public constant returns (uint8 result, uint256 player1balance_1, uint256 player1balance_2)
-  {
+    bytes32 p1h,
+    uint8 p1v,
+    bytes32 p1r,
+    bytes32 p1s,
+    bytes32 p2h,
+    uint8 p2v,
+    bytes32 p2r,
+    bytes32 p2s,
+    string p1m,
+    string p2m) public constant returns (
+    uint8 result, uint256 player1balance_1, uint256 player1balance_2) {
+
     p1addr= ecrecover(p1h, p1v, p1r, p1s);
     if (p1addr!=owner) throw;
     //  bool p1honest=true;
@@ -81,15 +78,12 @@ contract Channel
 
     (nonce_1, player1balance, player2balance) = decodeMessage(p1m);
 
-
-
     return(result, player1balance, player2balance);
-
-
   }
 
-  function decodeMessage(string message) public constant returns (uint256 _nonce, uint256 _player1balance, uint256 _player2balance)
-  {
+  function decodeMessage(string message) public
+  constant returns (uint256 _nonce, uint256 _player1balance, uint256 _player2balance) {
+    
     var s = message.toSlice();
     var delim = "|".toSlice();
 
@@ -98,17 +92,17 @@ contract Channel
     _player2balance = stringToUint(s.split(delim).toString());
   }
 
-  function close(bytes32 p1h,
-   uint8 p1v,
-   bytes32 p1r,
-   bytes32 p1s,
-   bytes32 p2h,
-   uint8 p2v,
-   bytes32 p2r,
-   bytes32 p2s,
-   string p1m,
-   string p2m)
-  {
+  function close(
+    bytes32 p1h,
+    uint8 p1v,
+    bytes32 p1r,
+    bytes32 p1s,
+    bytes32 p2h,
+    uint8 p2v,
+    bytes32 p2r,
+    bytes32 p2s,
+    string p1m,
+    string p2m) {
 
     var (winner, p1b, p2b) = validateMessage(p1h, p1v, p1r, p1s, p2h, p2v, p2r, p2s, p1m, p2m);
 
@@ -117,11 +111,12 @@ contract Channel
 
   }
 
-  function getBlanace() public constant returns (uint256)
-  {
-   return this.balance;
- }
- function signatureSplit(bytes signature) private returns (bytes32 r, bytes32 s, uint8 v) {
+  function getBlanace() public constant returns (uint256) {
+    return this.balance;
+  }
+
+  function signatureSplit(bytes signature)
+  private returns (bytes32 r, bytes32 s, uint8 v) {
   // The signature format is a compact form of:
   //   {bytes32 r}{bytes32 s}{uint8 v}
   // Compact means, uint8 is not padded to 32 bytes.
@@ -140,53 +135,55 @@ contract Channel
 }
 
 
-function getTransferRawAddress(bytes memory signed_transfer) internal returns (bytes memory, address) {
-  uint signature_start;
-  uint length;
-  bytes memory signature;
-  bytes memory transfer_raw;
-  bytes32 transfer_hash;
-  address transfer_address;
+  function getTransferRawAddress(bytes memory signed_transfer)
+  internal returns (bytes memory, address) {
+    uint signature_start;
+    uint length;
+    bytes memory signature;
+    bytes memory transfer_raw;
+    bytes32 transfer_hash;
+    address transfer_address;
 
-  length = signed_transfer.length;
-  signature_start = length - 65;
-  signature = slice(signed_transfer, signature_start, length);
-  transfer_raw = slice(signed_transfer, 0, signature_start);
+    length = signed_transfer.length;
+    signature_start = length - 65;
+    signature = slice(signed_transfer, signature_start, length);
+    transfer_raw = slice(signed_transfer, 0, signature_start);
 
-  transfer_hash = sha3(transfer_raw);
-  var (r, s, v) = signatureSplit(signature);
-  transfer_address = ecrecover(transfer_hash, v, r, s);
+    transfer_hash = sha3(transfer_raw);
+    var (r, s, v) = signatureSplit(signature);
+    transfer_address = ecrecover(transfer_hash, v, r, s);
 
-  return (transfer_raw, transfer_address);
-}
-
-function slice(bytes a, uint start, uint end) private returns (bytes n) {
-  if (a.length < end) {
-    throw;
-  }
-  if (start < 0) {
-    throw;
+    return (transfer_raw, transfer_address);
   }
 
-  n = new bytes(end - start);
-  for (uint i = start; i < end; i++) { //python style slice
-    n[i - start] = a[i];
-  }
-}
-function stringToUint(string s) constant returns (uint result) {
-  bytes memory b = bytes(s);
-  uint i;
-  result = 0;
-  for (i = 0; i < b.length; i++) {
-    uint c = uint(b[i]);
-    if (c >= 48 && c <= 57) {
-      result = result * 10 + (c - 48);
+  function slice(bytes a, uint start, uint end) private returns (bytes n) {
+    if (a.length < end) {
+      throw;
+    }
+    if (start < 0) {
+      throw;
+    }
+
+    n = new bytes(end - start);
+    for (uint i = start; i < end; i++) { //python style slice
+      n[i - start] = a[i];
     }
   }
-}
-function verify( bytes32 hash, uint8 v, bytes32 r, bytes32 s) constant returns(address retAddr) {
-  retAddr= ecrecover(hash, v, r, s);
-}
 
+  function stringToUint(string s) constant returns (uint result) {
+    bytes memory b = bytes(s);
+    uint i;
+    result = 0;
+    for (i = 0; i < b.length; i++) {
+      uint c = uint(b[i]);
+      if (c >= 48 && c <= 57) {
+        result = result * 10 + (c - 48);
+      }
+    }
+  }
 
+  function verify(bytes32 hash, uint8 v, bytes32 r, bytes32 s)
+  constant returns(address retAddr) {
+    retAddr= ecrecover(hash, v, r, s);
+  }
 }
