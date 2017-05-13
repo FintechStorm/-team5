@@ -1,23 +1,78 @@
-<!DOCTYPE html>
 <html>
 <head>
-  <title>MetaCoin - Truffle Webpack Demo w/ Frontend</title>
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-  <script src="./app.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+  crossorigin="anonymous"></script>
+  <script src="javascript/web3.min.js"></script>
+  <script src="javascript/ethjs-util.min.js"></script>
+  <script src="javascript/bignumber.min.js"></script>
+  <!-- <script src="js/insta.js"></script> -->
+  <script src="javascript/index.js"></script>
 </head>
 <body>
-  <h1>MetaCoin</h1>
-  <h2>Example Truffle Dapp</h2>
-  <h3>You have <span class="black"><span id="balance"></span> META</span></h3>
+<h1><img style="height:40px; width:40px;" src="http://cultofthepartyparrot.com/parrots/hd/parrot.gif" /> Welcome to InstaPay
+<img style="height:40px; width:40px;" src="http://cultofthepartyparrot.com/parrots/hd/rightparrot.gif" /></h1>
 
-  <br>
-  <h1>Send MetaCoin</h1>
-  <br><label for="amount">Amount:</label><input type="text" id="amount" placeholder="e.g., 95"></input>
-  <br><label for="receiver">To Address:</label><input type="text" id="receiver" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input>
-  <br><br><button id="send" onclick="App.sendCoin()">Send MetaCoin</button>
-  <br><br>
-  <span id="status"></span>
-  <br>
-  <span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span>
+<h2> Open Channel </h2>
+Total Deposit:<input name="deploy_stake" id="deploy_stake" /> <br/>
+Partner Address:<input name="deploy_opponent" id="deploy_opponent" /><br/>
+<button name="Open" value="open" id="btn_deploy">Open Channel</button>
+Contract Address : <div id="deploy_res" ></div>
+<br/>
+
+Result: Contract address: <br/>
+
+<h3> Enter contract address for all functions below<h3>
+Contract Address: <input id="contractAddress" /> <br/>
+<h2> Match deposit </h2>
+  
+Stake: <input id="stake_val" name="stake" /> <br/>
+<button id="btn_stake" value='submit'>submit</button> <br/>
+Result:
+
+<h2> Transfer </h2>
+<!-- Secret: (dont forget!) <input type="text" id="play_secret" name="hand"> <br/> -->
+Nonce: <input type="number" id="play_nonce" name="nonce"> <br/>
+Value: <input type="number" id="play_value" name="nonce"> <br/>
+Player1balance:<input type="number" id="play_p1b" name="player1Balance"> <br/>
+Player2balance:<input type="number" id="play_p2b" name="player2Balance"> <br/>
+<button type='submit' id="btn_play" value='submit'>submit</button> <br/>
+Result:
+<div id='#play_result'></div>
+<h2> Who won? you decide! </h2>
+Player1 message:<input type="text" id="compute_p1m" name="player1msg"><br/>
+Player1 hash:<input type="text" id="compute_p1h" name="player1Hash"><br/>
+Player1 signature:<input type="text" id="compute_p1s"  name="player1sign"><br/>
+<!-- Player1 secret:<input type="text" id="compute_p1s"  name="player1secret"><br/> -->
+Player2 message:<input type="text"  id="compute_p2m" name="player2msg"><br/>
+Player2 hash:<input type="text"  id="compute_p2h" name="player2Hash"><br/>
+Player2 signature:<input type="text"  id="compute_p2s" name="player2sign"><br/>
+<!-- Player2 secret:<input type="text"  id="compute_p2s" name="player2secret"><br/> -->
+<br/>
+<button id ="btn_winner">Compute</button>
+
+<br/>Result:
+<br/>Winner:
+<br/>nonce:
+<br/>Player1 hand:
+<br/>Player2 hand:
+<br/>player1 balance: 
+<br/>player2 balance: 
+<br/> 
+
+<h2> Cashout</h2>
+Close the channel and cashout.
+Last message:<input type="text"  id="cashout_p1h" name="player1Hash"><br/>
+hash:<input type="text"  id="cashout_p1h" name="player1Hash"><br/>
+<!-- secret:<input type="text" id="cashout_p1s" name="player1secret"><br/> -->
+<!-- Player2 hash:<input type="text" id="cashout_p2h" name="player2Hash"><br/>
+Player2 hash:<input type="text" id="cashout_p2h" name="player2Hash"><br/>
+Player2 secret:<input type="text" id="cashout_p2s" name="player2secret"><br/>
+ -->
+<button>How bout dah?</button>
+<br/> Result:
+
 </body>
 </html>
+
