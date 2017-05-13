@@ -1,0 +1,75 @@
+ message = {
+from: identity,
+topics: [ topic ],
+payload: payload,
+ttl: 100,
+workToProve: 100
+}
+
+ > shh.post({type: 'asym', ttl: 700, topic: '0x07678231', powTarget: 3, powTime: 2, payload: '0x68656c6c6f', key: '0x042f02c9645d1d442a35dd1dd9c4358f8992d77424bd5c6013daf2d82cfd42db72e04c649ff2331c0ce7c1073d0b427f554e2cc450fc35fb97b593d900c9f97974'})
+
+
+f = shh.subscribe({type: 'asym', topics: ['0x07678231'], key: '0x042f02c9645d1d442a35dd1dd9c4358f8992d77424bd5c6013daf2d82cfd42db72e04c649ff2331c0ce7c1073d0b427f554e2cc450fc35fb97b593d900c9f97974'})
+
+
+ > shh.getNewSubscriptionMessages("0x042f02c9645d1d442a35dd1dd9c4358f8992d77424bd5c6013daf2d82cfd42db72e04c649ff2331c0ce7c1073d0b427f554e2cc450fc35fb97b593d900c9f97974")
+
+
+id= "0x042f02c9645d1d442a35dd1dd9c4358f8992d77424bd5c6013daf2d82cfd42db72e04c649ff2331c0ce7c1073d0b427f554e2cc450fc35fb97b593d900c9f97974"
+id="0x04573a364471175815553a985b1a076a3af2308f8245de8ad79202e009df9cd0e62243c91203b28f64cb83c2088a9a355ef18c36567ade89a9e6489a9302a53f5b"
+f = shh.subscribe({type: 'asym', key: id})
+
+> shh.getNewSubscriptionMessages(f)
+
+
+ shh.subscribe({type: 'asym', pow: 0.001, topics: ['0x5a4ea131', '0x11223344'], key: 'b874f3bbaf031214a567485b703a025cec27d26b2c4457d6b139e56ad8734cea', sig: '0x048229fb947363cf13bb9f9532e124f08840cd6287ecae6b537cda2947ec2b23dbdc3a07bdf7cd2bfb288c25c4d0d0461d91c719da736a22b7bebbcf912298d1e6'})
+
+shh.post({type: 'asym', ttl: 60, topic: '0x07678231', powTarget: 2, powTime: 20, payload: '0x68656c6c6f', key: '0x0490975ed24af645efcf96fb0cdb2e36e5a9fefb02c7000665ca0c11ddaafda03183a312aa723d6f02cc5de3973e1c96fcda420d692055087c8c685b9c4636f5b2'})
+
+f = shh.subscribe({type: 'asym', key: '52c70d132efb5a671a6936d3cb040f8516a5001fbd026d0ab2084ee8d72c98dc'})
+
+shh.post({
+from: '0x04b230fb8b70df4184355dd58847fa97683ad2eda0edb404459775f0238d3ecc15de33ec2589410a28580a7d17b1b8197c178cdfedbf3257fac6c1c8a2d15a3ce2',
+to:'0x04b230fb8b70df4184355dd58847fa97683ad2eda0edb404459775f0238d3ecc15de33ec2589410a28580a7d17b1b8197c178cdfedbf3257fac6c1c8a2d15a3ce2',
+topics: [ 'mjolnir' ],
+payload: 'cool re',
+ttl: 100,
+workToProve: 100
+})
+
+web3.shh.filter({
+topics: [ 'mjolnir' ]
+}).watch(function (error, result) {
+if (error) console.error('ssh:error', error)
+else console.log('ssh:result', result)
+})
+
+shh.post({
+  "from": "0x048175fbf3e1ac470af070bb06971acb53699b22baf3a9322dee86334a8a67d43c382adb54fab05244177db26bbba0ecb0a637531adb8ba862cd1416e25f0baf46",
+  "topics": [ "0x4d792073696c6c792061707021" ],
+  "payload": [ 0x47617620576f756c64, 0x5768617420697320796f7572206e616d653f ],
+  "ttl": "100",
+  "priority": "1000"
+});
+
+
+
+shh.post({
+"from":"0x048175fbf3e1ac470af070bb06971acb53699b22baf3a9322dee86334a8a67d43c382adb54fab05244177db26bbba0ecb0a637531adb8ba862cd1416e25f0baf46",
+"to":"0x048175fbf3e1ac470af070bb06971acb53699b22baf3a9322dee86334a8a67d43c382adb54fab05244177db26bbba0ecb0a637531adb8ba862cd1416e25f0baf46",
+  "payload":  "COME",
+  "topics": [ "WHISPPPPPA" ],
+  "ttl": "100"
+});
+
+var replyWatch = shh.filter({
+  "topics": [ "0x4d792073696c6c792061707021"],
+  "to": "0x048175fbf3e1ac470af070bb06971acb53699b22baf3a9322dee86334a8a67d43c382adb54fab05244177db26bbba0ecb0a637531adb8ba862cd1416e25f0baf46"
+});
+
+shh.filter({
+topics: [ '0x4d792073696c6c792061707021' ]
+}).watch(function (error, result) {
+if (error) console.error('ssh:error', error)
+else console.log('ssh:result', JSON.stringify(result, null, 2))
+})

@@ -6,18 +6,13 @@ contract Channel {
   using strings for *;
 
   address owner;
-  address opponent;
+  address partner;
   uint256 stake;
   bool matched = false;
   uint256 expirationBlockTime;
-  uint256 nonce_1;
-  uint256 nonce_2;
-  uint256 player1balance;
-  uint256 player2balance;
-  address p1addr;
-  address p2addr;
-
-  event LogClose(uint256, string, uint256, uint256);
+  uint256 nonce;
+  uint256 ownerBalance;
+  uint256 partnerbalance;
 
   modifier onlyOwner() {
     if (msg.sender!=owner) throw;
@@ -29,17 +24,18 @@ contract Channel {
     _;
   }
 
-  //enum Results{empty, commit, cancel, matched, win1, win2, draw, expired}
-
-  mapping (bytes32 => uint) publicGameHashToIndex;
-
-  mapping (string => mapping(string => int)) payoffMatrix;
+enum State {
+  created,
+  open,
+  closed,
+  settled
+}
   //constructor
-  function Channel(address _opponent) payable {
+  function Channel(address _partner) payable {
     if (msg.value<=0) throw;
 
     owner= msg.sender;
-    opponent = _opponent;
+    partner = _partner;
     stake = msg.value;
     expirationBlockTime = 7200 ;//24 hour in blocks, time player 1 has to reveal once matched
 
@@ -48,7 +44,7 @@ contract Channel {
   function () {} //no fallback, use the functions to play
 
   function matchStake() payable {
-    if (msg.sender != opponent) throw;
+    if (msg.sender != partner) throw;
     if (msg.value != stake) throw;
     if (matched) throw;
     matched = true;
@@ -66,19 +62,17 @@ contract Channel {
     bytes32 p2s,
     string p1m,
     string p2m) public constant returns (
-    uint8 result, uint256 player1balance_1, uint256 player1balance_2) {
+    uint8 result, uint256 ownerBalance, uint256 partnerBalance) {
 
-    p1addr= ecrecover(p1h, p1v, p1r, p1s);
-    if (p1addr!=owner) throw;
+    address _owner= ecrecover(p1h, p1v, p1r, p1s);
+    if (_owner!=owner) throw;
     //  bool p1honest=true;
-    p2addr= ecrecover(p2h, p2v, p2r, p2s);
-    if (p2addr!=opponent) throw;
-    //bool p2honest=true;
-    //return(p1honest,p2honest);
+    address _partner= ecrecover(p2h, p2v, p2r, p2s);
+    if (_partner!=partner) throw;
 
-    (nonce_1, player1balance, player2balance) = decodeMessage(p1m);
+    (nonce, ownerBalance, partnerBalance) = decodeMessage(p1m);
 
-    return(result, player1balance, player2balance);
+    return(result, ownerBalance, partnerBalance);
   }
 
   function decodeMessage(string message) public
@@ -103,10 +97,10 @@ contract Channel {
     bytes32 p2s,
     string p1m,
     string p2m) {
-
+    if (msg.sender!=owner || msg.sender!=partner) throw;
     var (winner, p1b, p2b) = validateMessage(p1h, p1v, p1r, p1s, p2h, p2v, p2r, p2s, p1m, p2m);
 
-    if(!opponent.send(p2b)) throw;
+    if(!partner.send(p2b)) throw;
     if(!owner.send(this.balance)) throw;
 
   }
