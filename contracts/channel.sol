@@ -31,7 +31,7 @@ enum State {
   settled
 }
   //constructor
-  function Channel(address _partner) payable {
+  function Channel(address owner, address _partner) payable {
     if (msg.value<=0) throw;
 
     owner= msg.sender;
@@ -81,6 +81,7 @@ enum State {
     _player2balance = stringToUint(s.split(delim).toString());
   }
 
+event ChannelClosed(uint256,uint256,uint256);
   function close(
     string m,
     bytes32 h,
@@ -92,7 +93,7 @@ enum State {
     var (nonce, ownerBalance, partnerBalance) = decodeMessage(m);
     if(!partner.send(partnerBalance)) throw;
     if(!owner.send(this.balance)) throw;
-
+    ChannelClosed(nonce,ownerBalance,partnerBalance);
   }
 
   function getBlanace() public constant returns (uint256) {
