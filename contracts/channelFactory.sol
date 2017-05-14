@@ -4,7 +4,7 @@ contract channelFactory {
 
   // mapping(address=>address) contractMap;
   // mapping(address=> uint256) contractStake;
-  uint8 nonce;
+  
   function channelFactory()
   {
   }
@@ -15,11 +15,11 @@ contract channelFactory {
   {
     Channel contractAddress=  new Channel(msg.sender,partner);
     contractAddress.initialDeposit.value(msg.value)(msg.sender);
-
+    ChannelCreated(msg.sender, partner, contractAddress ,msg.value);
 
   }
     // contractMap[msg.sender] =contractAddress;
-    // ChannelCreated(msg.sender, partner, contractAddress,msg.value);
+
     // contractStake[contractMap[msg.sender]]=msg.value;
 
 }
