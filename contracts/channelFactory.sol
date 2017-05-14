@@ -10,11 +10,11 @@ contract channelFactory {
   }
 
   event ChannelCreated(address indexed from, address indexed to, address indexed contractAddress, uint256);
-  function createChannel (address partner, address contract)
+  function createChannel (address partner)
   payable
   {
-    contract.transfer(msg.value);
-    address contractAddress=  new Channel(msg.sender,partner);
+    Channel contractAddress=  new Channel(msg.sender,partner);
+    contractAddress.initialDeposit.value(msg.value)(msg.sender);
 
 
   }

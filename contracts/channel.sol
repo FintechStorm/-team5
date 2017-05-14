@@ -31,14 +31,19 @@ enum State {
   settled
 }
   //constructor
-  function Channel(address owner, address _partner) payable {
-    if (msg.value<=0) throw;
-
-    owner= msg.sender;
+  function Channel(address _owner, address _partner) {
+    
+    owner= _owner;
     partner = _partner;
-    stake = msg.value;
     expirationBlockTime = 7200 ;//24 hour in blocks, time player 1 has to reveal once matched
+  }
 
+  function initialDeposit(address _sender)
+  payable{
+    if (msg.value<=0) throw;
+    if (_sender!=owner) throw;
+    stake = msg.value;
+    
   }
 
   function () {} //no fallback, use the functions to play
