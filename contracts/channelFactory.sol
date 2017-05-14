@@ -9,7 +9,7 @@ contract channelFactory {
   {
   }
 
-  event ChannelCreated(address indexed from, address indexed to, address indexed contractAddress, uint256);
+  event ChannelCreated(address indexed from, address indexed to, address indexed contractAddress, uint256 value);
   function createChannel (address partner)
   payable
   {
